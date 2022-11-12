@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:app_dummy_10a/app_theme.dart';
+import 'package:app_dummy_10a/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'navigation_home_screen.dart';
@@ -26,15 +27,18 @@ class MyApp extends StatelessWidget {
       systemNavigationBarIconBrightness: Brightness.dark,
     ));
     return MaterialApp(
-      title: 'Flutter UI',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        textTheme: AppTheme.textTheme,
-        platform: TargetPlatform.iOS,
-      ),
-      home: NavigationHomeScreen(),
-    );
+        title: 'Registro de Asistencia',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          textTheme: AppTheme.textTheme,
+          platform: TargetPlatform.iOS,
+        ),
+        home: const MyLogin(),
+        routes: {
+          'Inicio': (context) => NavigationHomeScreen(),
+          'Login': (context) => const MyLogin()
+        });
   }
 }
 

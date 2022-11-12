@@ -150,7 +150,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
                   color: Colors.red,
                 ),
                 onTap: () {
-                  onTapped();
+                  Navigator.pushReplacementNamed(context, 'Login');
                 },
               ),
               SizedBox(
