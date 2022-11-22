@@ -48,4 +48,32 @@ class AssistAppTheme {
       platform: TargetPlatform.iOS,
     );
   }
+
+  static ThemeData buildDarkTheme() {
+    final Color primaryColor = HexColor('#54D3C2');
+    final Color secondaryColor = HexColor('#54D3C2');
+    final ColorScheme colorScheme = const ColorScheme.dark().copyWith(
+      primary: primaryColor,
+      secondary: secondaryColor,
+    );
+    final ThemeData base = ThemeData.dark();
+    return base.copyWith(
+      colorScheme: colorScheme,
+      primaryColor: primaryColor,
+      indicatorColor: Colors.black87,
+      splashColor: Colors.white24,
+      splashFactory: InkRipple.splashFactory,
+      canvasColor: Colors.black87,
+      backgroundColor: const Color(0xDD000000),
+      scaffoldBackgroundColor: const Color(0xDD000000),
+      errorColor: const Color(0xFFB00020),
+      buttonTheme: ButtonThemeData(
+        colorScheme: colorScheme,
+        textTheme: ButtonTextTheme.primary,
+      ),
+      textTheme: _buildTextTheme(base.textTheme),
+      primaryTextTheme: _buildTextTheme(base.primaryTextTheme),
+      platform: TargetPlatform.iOS,
+    );
+  }
 }

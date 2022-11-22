@@ -39,6 +39,7 @@ dependencies:
   intl: ^0.17.0
   animations: 
   simple_animations:
+  date_field:
 
 dev_dependencies:
   flutter_test:

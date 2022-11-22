@@ -1,7 +1,8 @@
+import 'package:app_dummy_10a/createReport_screen.dart';
 import 'package:app_dummy_10a/principal_pages/assist_app_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 
 import 'model/assist_list_data.dart';
 
@@ -21,6 +22,8 @@ class AssistListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var brightness = MediaQuery.of(context).platformBrightness;
+    bool isLightMode = brightness == Brightness.light;
     return AnimatedBuilder(
       animation: animationController!,
       builder: (BuildContext context, Widget? child) {
@@ -53,8 +56,11 @@ class AssistListView extends StatelessWidget {
                         Column(
                           children: <Widget>[
                             Container(
-                              color: AssistAppTheme.buildLightTheme()
-                                  .backgroundColor,
+                              color: isLightMode
+                                  ? AssistAppTheme.buildLightTheme()
+                                      .backgroundColor
+                                  : AssistAppTheme.buildDarkTheme()
+                                      .backgroundColor,
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -71,23 +77,40 @@ class AssistListView extends StatelessWidget {
                                               CrossAxisAlignment.start,
                                           children: <Widget>[
                                             Row(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                            children: [
-                                              Text(
-                                                'Folio: ${assistData!.titleTxt}',
-                                                textAlign: TextAlign.left,
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.w600,
-                                                  fontSize: 22,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceAround,
+                                              children: [
+                                                Text(
+                                                  'Folio: ${assistData!.titleTxt}',
+                                                  textAlign: TextAlign.left,
+                                                  style: const TextStyle(
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 22,
+                                                  ),
                                                 ),
-                                              ),
-                                              Icon( Icons.report_problem, ),
-                                            ],
-                                            
+                                                IconButton(
+                                                  icon: const Icon(
+                                                      Icons.report_problem),
+                                                  onPressed: () {
+                                                    Navigator.push(context,
+                                                        MaterialPageRoute(
+                                                            builder:
+                                                                ((context) {
+                                                      return CreateReportScreen(
+                                                        folio: assistData!
+                                                            .titleTxt,
+                                                        id: assistData!.id,
+                                                        fecha: assistData!.date,
+                                                      );
+                                                    })));
+                                                  },
+                                                ),
+                                              ],
                                             ),
                                             Text(
-                                                'Fecha de entrada: ${assistData!.date}'),
+                                                'Fecha de entrada: ${DateFormat("dd/MM/yyyy").format(assistData!.date)}'),
                                             Row(
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.center,
@@ -97,16 +120,19 @@ class AssistListView extends StatelessWidget {
                                                 Icon(
                                                   FontAwesomeIcons.clock,
                                                   size: 12,
-                                                  color: AssistAppTheme
-                                                          .buildLightTheme()
-                                                      .primaryColor,
+                                                  color: isLightMode
+                                                      ? AssistAppTheme
+                                                              .buildLightTheme()
+                                                          .primaryColor
+                                                      : AssistAppTheme
+                                                              .buildDarkTheme()
+                                                          .primaryColor,
                                                 ),
                                                 Text(
                                                   'Hora de entrada: ${assistData!.checkintime}',
-                                                  style: TextStyle(
-                                                      fontSize: 14,
-                                                      color: Colors.grey
-                                                          .withOpacity(0.8)),
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                  ),
                                                 ),
                                                 const SizedBox(
                                                   width: 4,
@@ -126,10 +152,9 @@ class AssistListView extends StatelessWidget {
                                                     'Hora de salida: ${assistData!.departime}',
                                                     overflow:
                                                         TextOverflow.ellipsis,
-                                                    style: TextStyle(
-                                                        fontSize: 14,
-                                                        color: Colors.grey
-                                                            .withOpacity(0.8)),
+                                                    style: const TextStyle(
+                                                      fontSize: 14,
+                                                    ),
                                                   ),
                                                 ),
                                               ],

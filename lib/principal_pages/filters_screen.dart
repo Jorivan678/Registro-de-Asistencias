@@ -1,25 +1,27 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'range_slider_view.dart';
-import 'slider_view.dart';
 import 'assist_app_theme.dart';
-import 'model/popular_filter_list.dart';
 import 'package:app_dummy_10a/principal_pages/calendar_popup_view.dart';
 
 class FiltersScreen extends StatefulWidget {
+  const FiltersScreen({Key? key}) : super(key: key);
+
   @override
-  _FiltersScreenState createState() => _FiltersScreenState();
+  State<FiltersScreen> createState() => _FiltersScreenState();
 }
 
 class _FiltersScreenState extends State<FiltersScreen> {
-  DateTime startDate = DateTime.now();
-  DateTime endDate = DateTime.now().add(const Duration(days: 5));
+  DateTime startDate = DateTime.now().add(const Duration(days: -1));
+  DateTime endDate = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
+    var brightness = MediaQuery.of(context).platformBrightness;
+    bool isLightMode = brightness == Brightness.light;
     return Container(
-      color: AssistAppTheme.buildLightTheme().backgroundColor,
+      color: isLightMode
+          ? AssistAppTheme.buildLightTheme().backgroundColor
+          : AssistAppTheme.buildDarkTheme().backgroundColor,
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: Column(
@@ -46,7 +48,9 @@ class _FiltersScreenState extends State<FiltersScreen> {
               child: Container(
                 height: 48,
                 decoration: BoxDecoration(
-                  color: AssistAppTheme.buildLightTheme().primaryColor,
+                  color: isLightMode
+                      ? AssistAppTheme.buildLightTheme().primaryColor
+                      : AssistAppTheme.buildDarkTheme().primaryColor,
                   borderRadius: const BorderRadius.all(Radius.circular(24.0)),
                   boxShadow: <BoxShadow>[
                     BoxShadow(
@@ -64,7 +68,7 @@ class _FiltersScreenState extends State<FiltersScreen> {
                     onTap: () {
                       Navigator.pop(context);
                     },
-                    child: Center(
+                    child: const Center(
                       child: Text(
                         'Aplicar',
                         style: TextStyle(
@@ -84,7 +88,12 @@ class _FiltersScreenState extends State<FiltersScreen> {
   }
 
   Widget dateFilter() {
+    var brightness = MediaQuery.of(context).platformBrightness;
+    bool isLightMode = brightness == Brightness.light;
     return Material(
+        color: isLightMode
+            ? AssistAppTheme.buildLightTheme().backgroundColor
+            : AssistAppTheme.buildDarkTheme().backgroundColor,
         child: InkWell(
             focusColor: Colors.transparent,
             highlightColor: Colors.transparent,
@@ -95,9 +104,9 @@ class _FiltersScreenState extends State<FiltersScreen> {
             ),
             onTap: () {
               FocusScope.of(context).requestFocus(FocusNode());
-              // setState(() {
-              //   isDatePopupOpen = true;
-              // });
+              /*setState(() {
+                isDatePopupOpen = true;
+              });*/
               showDemoDialog(context: context);
             },
             child: Column(
@@ -110,7 +119,7 @@ class _FiltersScreenState extends State<FiltersScreen> {
                     'Rango de fechas',
                     textAlign: TextAlign.left,
                     style: TextStyle(
-                        color: Colors.grey,
+                        color: isLightMode ? Colors.black : Colors.white,
                         fontSize:
                             MediaQuery.of(context).size.width > 360 ? 18 : 16,
                         fontWeight: FontWeight.normal),
@@ -118,10 +127,10 @@ class _FiltersScreenState extends State<FiltersScreen> {
                 ),
                 Text(
                   '${DateFormat("dd, MMM").format(startDate)} - ${DateFormat("dd, MMM").format(endDate)}',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w100,
-                    fontSize: 16,
-                  ),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w100,
+                      fontSize: 16,
+                      color: Colors.grey),
                 ),
                 const SizedBox(
                   height: 8,
@@ -131,9 +140,13 @@ class _FiltersScreenState extends State<FiltersScreen> {
   }
 
   Widget getAppBarUI() {
+    var brightness = MediaQuery.of(context).platformBrightness;
+    bool isLightMode = brightness == Brightness.light;
     return Container(
       decoration: BoxDecoration(
-        color: AssistAppTheme.buildLightTheme().backgroundColor,
+        color: isLightMode
+            ? AssistAppTheme.buildLightTheme().backgroundColor
+            : AssistAppTheme.buildDarkTheme().backgroundColor,
         boxShadow: <BoxShadow>[
           BoxShadow(
               color: Colors.grey.withOpacity(0.2),
@@ -161,7 +174,10 @@ class _FiltersScreenState extends State<FiltersScreen> {
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Icon(Icons.close),
+                    child: Icon(
+                      Icons.close,
+                      color: isLightMode ? Colors.black : Colors.white,
+                    ),
                   ),
                 ),
               ),
@@ -171,9 +187,9 @@ class _FiltersScreenState extends State<FiltersScreen> {
                 child: Text(
                   'Filtro',
                   style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 22,
-                  ),
+                      fontWeight: FontWeight.w600,
+                      fontSize: 22,
+                      color: isLightMode ? Colors.black : Colors.white),
                 ),
               ),
             ),
@@ -192,7 +208,7 @@ class _FiltersScreenState extends State<FiltersScreen> {
       context: context!,
       builder: (BuildContext context) => CalendarPopupView(
         barrierDismissible: true,
-        minimumDate: DateTime.now(),
+        maximumDate: DateTime.now(),
         //  maximumDate: DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day + 10),
         initialEndDate: endDate,
         initialStartDate: startDate,

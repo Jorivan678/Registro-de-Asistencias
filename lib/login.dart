@@ -4,14 +4,14 @@ class MyLogin extends StatefulWidget {
   const MyLogin({Key? key}) : super(key: key);
 
   @override
-  _MyLoginState createState() => _MyLoginState();
+  State<MyLogin> createState() => _MyLoginState();
 }
 
 class _MyLoginState extends State<MyLogin> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         image: DecorationImage(
             image: AssetImage('assets/images/login.png'), fit: BoxFit.cover),
       ),
@@ -20,8 +20,8 @@ class _MyLoginState extends State<MyLogin> {
         body: Stack(
           children: [
             Container(
-              padding: EdgeInsets.only(left: 35, top: 130),
-              child: Text(
+              padding: const EdgeInsets.only(left: 35, top: 130),
+              child: const Text(
                 'Bienvenido\nde vuelta',
                 style: TextStyle(color: Colors.white, fontSize: 33),
               ),
@@ -34,11 +34,11 @@ class _MyLoginState extends State<MyLogin> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      margin: EdgeInsets.only(left: 35, right: 35),
+                      margin: const EdgeInsets.only(left: 35, right: 35),
                       child: Column(
                         children: [
-                          TextField(
-                            style: TextStyle(color: Colors.black),
+                          TextFormField(
+                            style: const TextStyle(color: Colors.black),
                             decoration: InputDecoration(
                                 fillColor: Colors.grey.shade100,
                                 filled: true,
@@ -47,11 +47,11 @@ class _MyLoginState extends State<MyLogin> {
                                   borderRadius: BorderRadius.circular(10),
                                 )),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 30,
                           ),
-                          TextField(
-                            style: TextStyle(),
+                          TextFormField(
+                            style: const TextStyle(),
                             obscureText: true,
                             decoration: InputDecoration(
                                 fillColor: Colors.grey.shade100,
@@ -61,14 +61,14 @@ class _MyLoginState extends State<MyLogin> {
                                   borderRadius: BorderRadius.circular(10),
                                 )),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 40,
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               TextButton(
-                                child: Text('Iniciar Sesión',
+                                child: const Text('Iniciar Sesión',
                                     style: TextStyle(
                                         fontSize: 27,
                                         fontWeight: FontWeight.w700)),
@@ -79,7 +79,7 @@ class _MyLoginState extends State<MyLogin> {
                               ),
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 40,
                           ),
                           Row(
@@ -87,7 +87,7 @@ class _MyLoginState extends State<MyLogin> {
                             children: [
                               TextButton(
                                   onPressed: () {},
-                                  child: Text(
+                                  child: const Text(
                                     '¿Olvidaste la contraseña?\nContácta al administrador.',
                                     style: TextStyle(
                                       decoration: TextDecoration.underline,

@@ -1,14 +1,15 @@
 import 'package:app_dummy_10a/principal_pages/assist_list_view.dart';
 import 'package:app_dummy_10a/principal_pages/model/assist_list_data.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'filters_screen.dart';
 import 'assist_app_theme.dart';
 
 class AssistHomeScreen extends StatefulWidget {
+  const AssistHomeScreen({Key? key}) : super(key: key);
+
   @override
-  _AssistHomeScreenState createState() => _AssistHomeScreenState();
+  State<AssistHomeScreen> createState() => _AssistHomeScreenState();
 }
 
 class _AssistHomeScreenState extends State<AssistHomeScreen>
@@ -39,93 +40,99 @@ class _AssistHomeScreenState extends State<AssistHomeScreen>
 
   @override
   Widget build(BuildContext context) {
+    var brightness = MediaQuery.of(context).platformBrightness;
+    bool isLightMode = brightness == Brightness.light;
     return Theme(
-      data: AssistAppTheme.buildLightTheme(),
-      child: Container(
-        child: Scaffold(
-          body: Stack(
-            children: <Widget>[
-              InkWell(
-                splashColor: Colors.transparent,
-                focusColor: Colors.transparent,
-                highlightColor: Colors.transparent,
-                hoverColor: Colors.transparent,
-                onTap: () {
-                  FocusScope.of(context).requestFocus(FocusNode());
-                },
-                child: Column(
-                  children: <Widget>[
-                    getAppBarUI(),
-                    Expanded(
-                      child: NestedScrollView(
-                        controller: _scrollController,
-                        headerSliverBuilder:
-                            (BuildContext context, bool innerBoxIsScrolled) {
-                          return <Widget>[
-                            SliverList(
-                              delegate: SliverChildBuilderDelegate(
-                                  (BuildContext context, int index) {
-                                return Column(
-                                  children: <Widget>[
-                                    getSeparateBarUI(),
-                                    getTimeDateUI(),
-                                  ],
-                                );
-                              }, childCount: 1),
-                            ),
-                            SliverPersistentHeader(
-                              pinned: true,
-                              floating: true,
-                              delegate: ContestTabHeader(
-                                getFilterBarUI(),
-                              ),
-                            ),
-                          ];
-                        },
-                        body: Container(
-                          color:
-                              AssistAppTheme.buildLightTheme().backgroundColor,
-                          child: ListView.builder(
-                            itemCount: assistList.length,
-                            padding: const EdgeInsets.only(top: 8),
-                            scrollDirection: Axis.vertical,
-                            itemBuilder: (BuildContext context, int index) {
-                              final int count = assistList.length > 10
-                                  ? 10
-                                  : assistList.length;
-                              final Animation<double> animation =
-                                  Tween<double>(begin: 0.0, end: 1.0).animate(
-                                      CurvedAnimation(
-                                          parent: animationController!,
-                                          curve: Interval(
-                                              (1 / count) * index, 1.0,
-                                              curve: Curves.fastOutSlowIn)));
-                              animationController?.forward();
-                              return AssistListView(
-                                callback: () {},
-                                assistData: assistList[index],
-                                animation: animation,
-                                animationController: animationController!,
+      data: isLightMode
+          ? AssistAppTheme.buildLightTheme()
+          : AssistAppTheme.buildDarkTheme(),
+      child: Scaffold(
+        body: Stack(
+          children: <Widget>[
+            InkWell(
+              splashColor: Colors.transparent,
+              focusColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+              hoverColor: Colors.transparent,
+              onTap: () {
+                FocusScope.of(context).requestFocus(FocusNode());
+              },
+              child: Column(
+                children: <Widget>[
+                  getAppBarUI(),
+                  Expanded(
+                    child: NestedScrollView(
+                      controller: _scrollController,
+                      headerSliverBuilder:
+                          (BuildContext context, bool innerBoxIsScrolled) {
+                        return <Widget>[
+                          SliverList(
+                            delegate: SliverChildBuilderDelegate(
+                                (BuildContext context, int index) {
+                              return Column(
+                                children: <Widget>[
+                                  getSeparateBarUI(),
+                                  getTimeDateUI(),
+                                ],
                               );
-                            },
+                            }, childCount: 1),
                           ),
+                          SliverPersistentHeader(
+                            pinned: true,
+                            floating: true,
+                            delegate: ContestTabHeader(
+                              getFilterBarUI(assistList.length),
+                            ),
+                          ),
+                        ];
+                      },
+                      body: Container(
+                        color: isLightMode
+                            ? AssistAppTheme.buildLightTheme().backgroundColor
+                            : AssistAppTheme.buildDarkTheme().backgroundColor,
+                        child: ListView.builder(
+                          itemCount: assistList.length,
+                          padding: const EdgeInsets.only(top: 8),
+                          scrollDirection: Axis.vertical,
+                          itemBuilder: (BuildContext context, int index) {
+                            final int count =
+                                assistList.length > 10 ? 10 : assistList.length;
+                            final Animation<double> animation =
+                                Tween<double>(begin: 0.0, end: 1.0).animate(
+                                    CurvedAnimation(
+                                        parent: animationController!,
+                                        curve: Interval(
+                                            (1 / count) * index, 1.0,
+                                            curve: Curves.fastOutSlowIn)));
+                            animationController?.forward();
+                            return AssistListView(
+                              callback: () {},
+                              assistData: assistList[index],
+                              animation: animation,
+                              animationController: animationController!,
+                            );
+                          },
                         ),
                       ),
-                    )
-                  ],
-                ),
+                    ),
+                  )
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
 
   Widget getListUI() {
+    var brightness = MediaQuery.of(context).platformBrightness;
+    bool isLightMode = brightness == Brightness.light;
     return Container(
       decoration: BoxDecoration(
-        color: AssistAppTheme.buildLightTheme().backgroundColor,
+        color: isLightMode
+            ? AssistAppTheme.buildLightTheme().backgroundColor
+            : AssistAppTheme.buildDarkTheme().backgroundColor,
         boxShadow: <BoxShadow>[
           BoxShadow(
               color: Colors.grey.withOpacity(0.2),
@@ -135,7 +142,7 @@ class _AssistHomeScreenState extends State<AssistHomeScreen>
       ),
       child: Column(
         children: <Widget>[
-          Container(
+          SizedBox(
             height: MediaQuery.of(context).size.height - 156 - 50,
             child: FutureBuilder<bool>(
               future: getData(),
@@ -174,33 +181,9 @@ class _AssistHomeScreenState extends State<AssistHomeScreen>
     );
   }
 
-  Widget getAssistViewList() {
-    final List<Widget> AssistListViews = <Widget>[];
-    for (int i = 0; i < assistList.length; i++) {
-      final int count = assistList.length;
-      final Animation<double> animation =
-          Tween<double>(begin: 0.0, end: 1.0).animate(
-        CurvedAnimation(
-          parent: animationController!,
-          curve: Interval((1 / count) * i, 1.0, curve: Curves.fastOutSlowIn),
-        ),
-      );
-      AssistListViews.add(
-        AssistListView(
-          callback: () {},
-          assistData: assistList[i],
-          animation: animation,
-          animationController: animationController!,
-        ),
-      );
-    }
-    animationController?.forward();
-    return Column(
-      children: AssistListViews,
-    );
-  }
-
   Widget getTimeDateUI() {
+    var brightness = MediaQuery.of(context).platformBrightness;
+    bool isLightMode = brightness == Brightness.light;
     return Padding(
       padding: const EdgeInsets.only(left: 18, bottom: 16),
       child: Row(
@@ -214,7 +197,9 @@ class _AssistHomeScreenState extends State<AssistHomeScreen>
                     focusColor: Colors.transparent,
                     highlightColor: Colors.transparent,
                     hoverColor: Colors.transparent,
-                    splashColor: Colors.grey.withOpacity(0.2),
+                    splashColor: isLightMode
+                        ? Colors.grey.withOpacity(0.2)
+                        : AssistAppTheme.buildDarkTheme().splashColor,
                     borderRadius: const BorderRadius.all(
                       Radius.circular(4.0),
                     ),
@@ -236,8 +221,8 @@ class _AssistHomeScreenState extends State<AssistHomeScreen>
                             height: 8,
                           ),
                           Text(
-                            '${DateFormat("dd, MMM, yyyy").format(curentDay)}',
-                            style: TextStyle(
+                            DateFormat("dd, MMM, yyyy").format(curentDay),
+                            style: const TextStyle(
                               fontWeight: FontWeight.w100,
                               fontSize: 16,
                             ),
@@ -291,7 +276,7 @@ class _AssistHomeScreenState extends State<AssistHomeScreen>
                           const SizedBox(
                             height: 8,
                           ),
-                          Text(
+                          const Text(
                             '8:00 - 15:00',
                             style: TextStyle(
                               fontWeight: FontWeight.w100,
@@ -312,6 +297,8 @@ class _AssistHomeScreenState extends State<AssistHomeScreen>
   }
 
   Widget getSeparateBarUI() {
+    var brightness = MediaQuery.of(context).platformBrightness;
+    bool isLightMode = brightness == Brightness.light;
     return Padding(
       padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8),
       child: Row(
@@ -321,7 +308,9 @@ class _AssistHomeScreenState extends State<AssistHomeScreen>
               padding: const EdgeInsets.only(right: 16, top: 8, bottom: 8),
               child: Container(
                 decoration: BoxDecoration(
-                  color: AssistAppTheme.buildLightTheme().backgroundColor,
+                  color: isLightMode
+                      ? AssistAppTheme.buildLightTheme().backgroundColor
+                      : AssistAppTheme.buildDarkTheme().backgroundColor,
                   borderRadius: const BorderRadius.all(
                     Radius.circular(38.0),
                   ),
@@ -340,7 +329,9 @@ class _AssistHomeScreenState extends State<AssistHomeScreen>
     );
   }
 
-  Widget getFilterBarUI() {
+  Widget getFilterBarUI(int cantidad) {
+    var brightness = MediaQuery.of(context).platformBrightness;
+    bool isLightMode = brightness == Brightness.light;
     return Stack(
       children: <Widget>[
         Positioned(
@@ -350,7 +341,9 @@ class _AssistHomeScreenState extends State<AssistHomeScreen>
           child: Container(
             height: 24,
             decoration: BoxDecoration(
-              color: AssistAppTheme.buildLightTheme().backgroundColor,
+              color: isLightMode
+                  ? AssistAppTheme.buildLightTheme().backgroundColor
+                  : AssistAppTheme.buildDarkTheme().backgroundColor,
               boxShadow: <BoxShadow>[
                 BoxShadow(
                     color: Colors.grey.withOpacity(0.2),
@@ -361,7 +354,9 @@ class _AssistHomeScreenState extends State<AssistHomeScreen>
           ),
         ),
         Container(
-          color: AssistAppTheme.buildLightTheme().backgroundColor,
+          color: isLightMode
+              ? AssistAppTheme.buildLightTheme().backgroundColor
+              : AssistAppTheme.buildDarkTheme().backgroundColor,
           child: Padding(
             padding:
                 const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 4),
@@ -371,8 +366,8 @@ class _AssistHomeScreenState extends State<AssistHomeScreen>
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      '5 registros encontrados',
-                      style: TextStyle(
+                      '$cantidad registros encontrados',
+                      style: const TextStyle(
                         fontWeight: FontWeight.w100,
                         fontSize: 16,
                       ),
@@ -394,7 +389,8 @@ class _AssistHomeScreenState extends State<AssistHomeScreen>
                       Navigator.push<dynamic>(
                         context,
                         MaterialPageRoute<dynamic>(
-                            builder: (BuildContext context) => FiltersScreen(),
+                            builder: (BuildContext context) =>
+                                const FiltersScreen(),
                             fullscreenDialog: true),
                       );
                     },
@@ -402,7 +398,7 @@ class _AssistHomeScreenState extends State<AssistHomeScreen>
                       padding: const EdgeInsets.only(left: 8),
                       child: Row(
                         children: <Widget>[
-                          Text(
+                          const Text(
                             'Filtro',
                             style: TextStyle(
                               fontWeight: FontWeight.w100,
@@ -412,8 +408,11 @@ class _AssistHomeScreenState extends State<AssistHomeScreen>
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Icon(Icons.sort,
-                                color: AssistAppTheme.buildLightTheme()
-                                    .primaryColor),
+                                color: isLightMode
+                                    ? AssistAppTheme.buildLightTheme()
+                                        .primaryColor
+                                    : AssistAppTheme.buildDarkTheme()
+                                        .primaryColor),
                           ),
                         ],
                       ),
@@ -437,9 +436,13 @@ class _AssistHomeScreenState extends State<AssistHomeScreen>
   }
 
   Widget getAppBarUI() {
+    var brightness = MediaQuery.of(context).platformBrightness;
+    bool isLightMode = brightness == Brightness.light;
     return Container(
       decoration: BoxDecoration(
-        color: AssistAppTheme.buildLightTheme().backgroundColor,
+        color: isLightMode
+            ? AssistAppTheme.buildLightTheme().backgroundColor
+            : AssistAppTheme.buildDarkTheme().backgroundColor,
         boxShadow: <BoxShadow>[
           BoxShadow(
               color: Colors.grey.withOpacity(0.2),
@@ -457,7 +460,7 @@ class _AssistHomeScreenState extends State<AssistHomeScreen>
               width: AppBar().preferredSize.height + 40,
               height: AppBar().preferredSize.height,
               child: Material(
-                color: Colors.transparent,
+                color: isLightMode ? Colors.white : Colors.black,
               ),
             ),
             Expanded(
@@ -465,13 +468,13 @@ class _AssistHomeScreenState extends State<AssistHomeScreen>
                 child: Text(
                   'Registro de Asistencia',
                   style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 22,
-                  ),
+                      fontWeight: FontWeight.w600,
+                      fontSize: 18,
+                      color: isLightMode ? Colors.black : Colors.white),
                 ),
               ),
             ),
-            Container(
+            SizedBox(
               width: AppBar().preferredSize.height + 40,
               height: AppBar().preferredSize.height,
               child: Row(

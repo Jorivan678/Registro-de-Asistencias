@@ -1,15 +1,15 @@
 import 'package:app_dummy_10a/app_theme.dart';
 import 'package:app_dummy_10a/custom_drawer/drawer_user_controller.dart';
 import 'package:app_dummy_10a/custom_drawer/home_drawer.dart';
-import 'package:app_dummy_10a/feedback_screen.dart';
-import 'package:app_dummy_10a/help_screen.dart';
+import 'package:app_dummy_10a/reportList_screen.dart';
 import 'package:app_dummy_10a/principal_pages/assist_home_screen.dart';
-import 'package:app_dummy_10a/invite_friend_screen.dart';
 import 'package:flutter/material.dart';
 
 class NavigationHomeScreen extends StatefulWidget {
+  const NavigationHomeScreen({Key? key}) : super(key: key);
+
   @override
-  _NavigationHomeScreenState createState() => _NavigationHomeScreenState();
+  State<NavigationHomeScreen> createState() => _NavigationHomeScreenState();
 }
 
 class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
@@ -19,7 +19,7 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
   @override
   void initState() {
     drawerIndex = DrawerIndex.HOME;
-    screenView = AssistHomeScreen();
+    screenView = const AssistHomeScreen();
     super.initState();
   }
 
@@ -53,12 +53,12 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
       switch (drawerIndex) {
         case DrawerIndex.HOME:
           setState(() {
-            screenView = AssistHomeScreen();
+            screenView = const AssistHomeScreen();
           });
           break;
-        case DrawerIndex.Help:
+        case DrawerIndex.Report:
           setState(() {
-            screenView = HelpScreen();
+            screenView = const ReportListScreen();
           });
           break;
         default:

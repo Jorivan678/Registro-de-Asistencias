@@ -33,7 +33,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
         icon: Icon(Icons.toc),
       ),
       DrawerList(
-        index: DrawerIndex.Help,
+        index: DrawerIndex.Report,
         labelName: 'Incidencias',
         isAssetsImage: true,
         imageName: 'assets/images/supportIcon.png',
@@ -43,8 +43,6 @@ class _HomeDrawerState extends State<HomeDrawer> {
 
   @override
   Widget build(BuildContext context) {
-    var brightness = MediaQuery.of(context).platformBrightness;
-    bool isLightMode = brightness == Brightness.light;
     return Scaffold(
       backgroundColor: AppTheme.notWhite.withOpacity(0.5),
       body: Column(
@@ -96,13 +94,13 @@ class _HomeDrawerState extends State<HomeDrawer> {
                       );
                     },
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8, left: 4),
+                  const Padding(
+                    padding: EdgeInsets.only(top: 8, left: 4),
                     child: Text(
                       'Alejandro Pech',
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
-                        color: isLightMode ? AppTheme.grey : AppTheme.white,
+                        color: AppTheme.nearlyBlack,
                         fontSize: 18,
                       ),
                     ),
@@ -276,7 +274,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
 
 enum DrawerIndex {
   HOME,
-  Help,
+  Report,
   Testing,
 }
 
