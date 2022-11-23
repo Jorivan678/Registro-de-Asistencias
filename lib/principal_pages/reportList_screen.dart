@@ -3,7 +3,8 @@ import 'package:app_dummy_10a/principal_pages/model/report_list_data.dart';
 import 'package:app_dummy_10a/principal_pages/report_list_view.dart';
 import 'package:flutter/material.dart';
 
-import 'principal_pages/assist_home_screen.dart';
+import 'assist_home_screen.dart';
+import 'filters_screen.dart';
 
 class ReportListScreen extends StatefulWidget {
   const ReportListScreen({Key? key}) : super(key: key);
@@ -157,7 +158,7 @@ class _ReportListScreenState extends State<ReportListScreen>
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.end,
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -205,6 +206,51 @@ class _ReportListScreenState extends State<ReportListScreen>
                       style: const TextStyle(
                         fontWeight: FontWeight.w100,
                         fontSize: 16,
+                      ),
+                    ),
+                  ),
+                ),
+                Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    focusColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    hoverColor: Colors.transparent,
+                    splashColor: Colors.grey.withOpacity(0.2),
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(4.0),
+                    ),
+                    onTap: () {
+                      FocusScope.of(context).requestFocus(FocusNode());
+                      Navigator.push<dynamic>(
+                        context,
+                        MaterialPageRoute<dynamic>(
+                            builder: (BuildContext context) =>
+                                const FiltersScreen(),
+                            fullscreenDialog: true),
+                      );
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 8),
+                      child: Row(
+                        children: <Widget>[
+                          const Text(
+                            'Filtro',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w100,
+                              fontSize: 16,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Icon(Icons.sort,
+                                color: isLightMode
+                                    ? AssistAppTheme.buildLightTheme()
+                                        .primaryColor
+                                    : AssistAppTheme.buildDarkTheme()
+                                        .primaryColor),
+                          ),
+                        ],
                       ),
                     ),
                   ),

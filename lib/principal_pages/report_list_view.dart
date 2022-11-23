@@ -1,5 +1,5 @@
 import 'package:app_dummy_10a/principal_pages/assist_app_theme.dart';
-import 'package:app_dummy_10a/report_screen.dart';
+import 'package:app_dummy_10a/principal_pages/report_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -37,45 +37,45 @@ class ReportListView extends StatelessWidget {
                 child: InkWell(
                   splashColor: Colors.transparent,
                   onTap: callback,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius:
-                          const BorderRadius.all(Radius.circular(16.0)),
-                      boxShadow: <BoxShadow>[
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.6),
-                          offset: const Offset(4, 4),
-                          blurRadius: 16,
+                  child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                          return ReportScreen(
+                            folio: reportData!.folio,
+                            id: reportData!.id,
+                            fecha: reportData!.fecha,
+                            desc: reportData!.descripcion,
+                            tipo: reportData!.tipo,
+                            idAssist: reportData!.idAssist,
+                          );
+                        }));
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(16.0)),
+                          boxShadow: <BoxShadow>[
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.6),
+                              offset: const Offset(4, 4),
+                              blurRadius: 16,
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    child: ClipRRect(
-                      borderRadius:
-                          const BorderRadius.all(Radius.circular(16.0)),
-                      child: Stack(
-                        children: <Widget>[
-                          Column(
+                        child: ClipRRect(
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(16.0)),
+                          child: Stack(
                             children: <Widget>[
-                              Container(
-                                  color: isLightMode
-                                      ? AssistAppTheme.buildLightTheme()
-                                          .backgroundColor
-                                      : AssistAppTheme.buildDarkTheme()
-                                          .backgroundColor,
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(context,
-                                          MaterialPageRoute(builder: (context) {
-                                        return ReportScreen(
-                                          folio: reportData!.folio,
-                                          id: reportData!.id,
-                                          fecha: reportData!.fecha,
-                                          desc: reportData!.descripcion,
-                                          tipo: reportData!.tipo,
-                                          idAssist: reportData!.idAssist,
-                                        );
-                                      }));
-                                    },
+                              Column(
+                                children: <Widget>[
+                                  Container(
+                                    color: isLightMode
+                                        ? AssistAppTheme.buildLightTheme()
+                                            .backgroundColor
+                                        : AssistAppTheme.buildDarkTheme()
+                                            .backgroundColor,
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
@@ -146,13 +146,13 @@ class ReportListView extends StatelessWidget {
                                         ),
                                       ],
                                     ),
-                                  )),
+                                  ),
+                                ],
+                              ),
                             ],
                           ),
-                        ],
-                      ),
-                    ),
-                  ),
+                        ),
+                      )),
                 ),
               ),
             ),

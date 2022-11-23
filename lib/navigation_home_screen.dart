@@ -1,12 +1,14 @@
 import 'package:app_dummy_10a/app_theme.dart';
 import 'package:app_dummy_10a/custom_drawer/drawer_user_controller.dart';
 import 'package:app_dummy_10a/custom_drawer/home_drawer.dart';
-import 'package:app_dummy_10a/reportList_screen.dart';
+import 'package:app_dummy_10a/principal_pages/reportList_screen.dart';
 import 'package:app_dummy_10a/principal_pages/assist_home_screen.dart';
 import 'package:flutter/material.dart';
 
 class NavigationHomeScreen extends StatefulWidget {
-  const NavigationHomeScreen({Key? key}) : super(key: key);
+  final bool indicator;
+  const NavigationHomeScreen({Key? key, required this.indicator})
+      : super(key: key);
 
   @override
   State<NavigationHomeScreen> createState() => _NavigationHomeScreenState();
@@ -18,8 +20,13 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
 
   @override
   void initState() {
-    drawerIndex = DrawerIndex.HOME;
-    screenView = const AssistHomeScreen();
+    if (widget.indicator == true) {
+      drawerIndex = DrawerIndex.HOME;
+      screenView = const AssistHomeScreen();
+    } else {
+      drawerIndex = DrawerIndex.Report;
+      screenView = const ReportListScreen();
+    }
     super.initState();
   }
 

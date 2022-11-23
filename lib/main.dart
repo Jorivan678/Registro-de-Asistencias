@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:app_dummy_10a/app_theme.dart';
-import 'package:app_dummy_10a/login.dart';
-import 'package:app_dummy_10a/reportList_screen.dart';
+import 'package:app_dummy_10a/principal_pages/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'navigation_home_screen.dart';
@@ -39,8 +38,9 @@ class MyApp extends StatelessWidget {
         ),
         home: const MyLogin(),
         routes: {
-          'Inicio': (context) => const NavigationHomeScreen(),
-          'Incidencias': (context) => const ReportListScreen(),
+          'Inicio': (context) => const NavigationHomeScreen(indicator: true),
+          'Incidencias': (context) =>
+              const NavigationHomeScreen(indicator: false),
           'Login': (context) => const MyLogin(),
         });
   }

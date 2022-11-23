@@ -56,15 +56,14 @@ class _ReportScreenState extends State<ReportScreen> {
                   ? AssistAppTheme.buildLightTheme().backgroundColor
                   : AssistAppTheme.buildDarkTheme().backgroundColor,
               title: Text(
-                "Detalles de reporte de incidencia",
+                "Detalles del reporte de incidencia",
                 style: (TextStyle(
                     color: isLightMode ? Colors.black : Colors.white)),
               ),
               centerTitle: true,
               leading: IconButton(
                 onPressed: () {
-                  Navigator.of(context)
-                      .restorablePopAndPushNamed('Incidencias');
+                  Navigator.of(context).pushReplacementNamed('Incidencias');
                 },
                 icon: Icon(
                   Icons.arrow_back,
@@ -162,7 +161,7 @@ class _ReportScreenState extends State<ReportScreen> {
                       ),
                     ),
                     controller: desc,
-                    readOnly: false,
+                    readOnly: true,
                   ),
                   const SizedBox(
                     height: 10,

@@ -25,7 +25,7 @@ class CalendarPopupView extends StatefulWidget {
 
   final Function()? onCancelClick;
   @override
-  _CalendarPopupViewState createState() => _CalendarPopupViewState();
+  State<CalendarPopupView> createState() => _CalendarPopupViewState();
 }
 
 class _CalendarPopupViewState extends State<CalendarPopupView>
@@ -124,7 +124,7 @@ class _CalendarPopupViewState extends State<CalendarPopupView>
                                             ? DateFormat('EEE, dd MMM')
                                                 .format(startDate!)
                                             : '--/-- ',
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 16,
                                         ),
@@ -160,7 +160,7 @@ class _CalendarPopupViewState extends State<CalendarPopupView>
                                             ? DateFormat('EEE, dd MMM')
                                                 .format(endDate!)
                                             : '--/-- ',
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 16),
                                       ),
@@ -219,7 +219,7 @@ class _CalendarPopupViewState extends State<CalendarPopupView>
                                         Navigator.pop(context);
                                       } catch (_) {}
                                     },
-                                    child: Center(
+                                    child: const Center(
                                       child: Text(
                                         'Apply',
                                         style: TextStyle(
