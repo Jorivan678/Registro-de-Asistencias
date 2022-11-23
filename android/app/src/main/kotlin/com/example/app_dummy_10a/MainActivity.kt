@@ -1,4 +1,4 @@
-package com.example.app_dummy_10a
+package org.flutter.app.registerasistance
 
 import io.flutter.embedding.android.FlutterActivity
 
