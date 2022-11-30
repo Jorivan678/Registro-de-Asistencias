@@ -108,10 +108,9 @@ class _CalendarPopupViewState extends State<CalendarPopupView>
                                         CrossAxisAlignment.center,
                                     children: <Widget>[
                                       Text(
-                                        'From',
+                                        'Desde',
                                         textAlign: TextAlign.left,
                                         style: TextStyle(
-                                            fontWeight: FontWeight.w100,
                                             fontSize: 16,
                                             color:
                                                 Colors.grey.withOpacity(0.8)),
@@ -121,7 +120,7 @@ class _CalendarPopupViewState extends State<CalendarPopupView>
                                       ),
                                       Text(
                                         startDate != null
-                                            ? DateFormat('EEE, dd MMM')
+                                            ? DateFormat('EEE dd MMM', "es")
                                                 .format(startDate!)
                                             : '--/-- ',
                                         style: const TextStyle(
@@ -145,9 +144,8 @@ class _CalendarPopupViewState extends State<CalendarPopupView>
                                         CrossAxisAlignment.center,
                                     children: <Widget>[
                                       Text(
-                                        'To',
+                                        'Hasta',
                                         style: TextStyle(
-                                            fontWeight: FontWeight.w100,
                                             fontSize: 16,
                                             color:
                                                 Colors.grey.withOpacity(0.8)),
@@ -157,7 +155,7 @@ class _CalendarPopupViewState extends State<CalendarPopupView>
                                       ),
                                       Text(
                                         endDate != null
-                                            ? DateFormat('EEE, dd MMM')
+                                            ? DateFormat('EEE dd MMM', 'es')
                                                 .format(endDate!)
                                             : '--/-- ',
                                         style: const TextStyle(
@@ -221,7 +219,7 @@ class _CalendarPopupViewState extends State<CalendarPopupView>
                                     },
                                     child: const Center(
                                       child: Text(
-                                        'Apply',
+                                        'Aplicar',
                                         style: TextStyle(
                                             fontWeight: FontWeight.w500,
                                             fontSize: 18,

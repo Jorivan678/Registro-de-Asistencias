@@ -1,7 +1,6 @@
 import 'package:app_dummy_10a/principal_pages/createReport_screen.dart';
 import 'package:app_dummy_10a/principal_pages/assist_app_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 
 import 'model/assist_list_data.dart';
@@ -66,101 +65,93 @@ class AssistListView extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
                                   Expanded(
-                                    child: Container(
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 16, top: 8, bottom: 8),
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: <Widget>[
-                                            Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceAround,
-                                              children: [
-                                                Text(
-                                                  'Folio: ${assistData!.titleTxt}',
-                                                  textAlign: TextAlign.left,
-                                                  style: const TextStyle(
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 22,
-                                                  ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 16, top: 8, bottom: 8),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                'Folio: ${assistData!.cfolioEmpleado}',
+                                                textAlign: TextAlign.left,
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 22,
                                                 ),
-                                                IconButton(
-                                                  icon: const Icon(
-                                                      Icons.report_problem),
-                                                  onPressed: () {
-                                                    Navigator.push(context,
-                                                        MaterialPageRoute(
-                                                            builder:
-                                                                ((context) {
-                                                      return CreateReportScreen(
-                                                        folio: assistData!
-                                                            .titleTxt,
-                                                        id: assistData!.id,
-                                                        fecha: assistData!.date,
-                                                      );
-                                                    })));
-                                                  },
-                                                ),
-                                              ],
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    right: 25),
+                                                child: (assistData!.lIncidencia)
+                                                    ? IconButton(
+                                                        padding:
+                                                            EdgeInsets.zero,
+                                                        constraints:
+                                                            const BoxConstraints(),
+                                                        icon: const Icon(Icons
+                                                            .report_problem),
+                                                        onPressed: () {
+                                                          Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                  builder:
+                                                                      ((context) {
+                                                            return CreateReportScreen(
+                                                                iIdHorario:
+                                                                    assistData!
+                                                                        .iIdHorario,
+                                                                cTipoIncidencia:
+                                                                    assistData!
+                                                                        .ctipoRegistro,
+                                                                dtFechaIncidencia:
+                                                                    assistData!
+                                                                        .dtfechaRegistro);
+                                                          })));
+                                                        },
+                                                      )
+                                                    : const Text(""),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(
+                                            height: 4,
+                                          ),
+                                          Text(
+                                            'Fecha de registro:  ${DateFormat("yyyy-MM-dd HH:mm:ss", 'es').format(assistData!.dtfechaRegistro).toString()}',
+                                            style: const TextStyle(
+                                              fontSize: 16,
                                             ),
-                                            Text(
-                                                'Fecha de entrada: ${DateFormat("dd/MM/yyyy").format(assistData!.date)}'),
-                                            Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              children: <Widget>[
-                                                Icon(
-                                                  FontAwesomeIcons.clock,
-                                                  size: 12,
-                                                  color: isLightMode
-                                                      ? AssistAppTheme
-                                                              .buildLightTheme()
-                                                          .primaryColor
-                                                      : AssistAppTheme
-                                                              .buildDarkTheme()
-                                                          .primaryColor,
+                                          ),
+                                          const SizedBox(
+                                            height: 4,
+                                          ),
+                                          Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: <Widget>[
+                                              Text(
+                                                'Tipo de registro: ${assistData!.ctipoRegistro}',
+                                                style: const TextStyle(
+                                                  fontSize: 16,
                                                 ),
-                                                Text(
-                                                  'Hora de entrada: ${assistData!.checkintime}',
-                                                  style: const TextStyle(
-                                                    fontSize: 14,
-                                                  ),
-                                                ),
-                                                const SizedBox(
-                                                  width: 4,
-                                                ),
-                                                Text(
-                                                  '||',
-                                                  style: TextStyle(
-                                                      fontSize: 14,
-                                                      color: Colors.grey
-                                                          .withOpacity(0.8)),
-                                                ),
-                                                const SizedBox(
-                                                  width: 4,
-                                                ),
-                                                Expanded(
-                                                  child: Text(
-                                                    'Hora de salida: ${assistData!.departime}',
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: const TextStyle(
-                                                      fontSize: 14,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
+                                              ),
+                                              const SizedBox(
+                                                height: 4,
+                                              ),
+                                            ],
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ),

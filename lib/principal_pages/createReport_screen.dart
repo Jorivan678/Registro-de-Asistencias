@@ -2,13 +2,20 @@ import 'package:app_dummy_10a/principal_pages/assist_app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../share_prefs/prefs_user.dart';
+import 'model/reports.dart';
+
 class CreateReportScreen extends StatefulWidget {
-  final String folio;
-  final int id;
-  final DateTime fecha;
-  const CreateReportScreen(
-      {Key? key, required this.folio, required this.id, required this.fecha})
-      : super(key: key);
+  final int iIdHorario;
+  final String cTipoIncidencia;
+  final DateTime dtFechaIncidencia;
+
+  const CreateReportScreen({
+    Key? key,
+    required this.iIdHorario,
+    required this.cTipoIncidencia,
+    required this.dtFechaIncidencia,
+  }) : super(key: key);
 
   @override
   State<CreateReportScreen> createState() => _CreateReportScreenState();
@@ -16,14 +23,30 @@ class CreateReportScreen extends StatefulWidget {
 
 class _CreateReportScreenState extends State<CreateReportScreen> {
   final _formkey = GlobalKey<FormState>();
-  late int _selectedPosition = 0;
+  TextEditingController dateInput = TextEditingController(text: '');
+  TextEditingController desc = TextEditingController();
+  final prefUser = PrefUser();
   final List<String> opciones = ["Entrada", "Salida"];
-  late String tipo = '';
+  late String dropdownValue = '';
+  @override
+  void initState() {
+    super.initState();
+    if (widget.cTipoIncidencia == "") {
+      dropdownValue = opciones.first;
+    } else {
+      dropdownValue =
+          opciones.firstWhere((element) => element == widget.cTipoIncidencia);
+    }
+    dateInput.text = DateFormat("yyyy-MM-dd", 'es')
+        .format(widget.dtFechaIncidencia)
+        .toString();
+  }
 
   @override
   Widget build(BuildContext context) {
     var brightness = MediaQuery.of(context).platformBrightness;
     bool isLightMode = brightness == Brightness.light;
+
     return Container(
       color: isLightMode
           ? AssistAppTheme.buildLightTheme().backgroundColor
@@ -43,7 +66,7 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
               centerTitle: true,
               leading: IconButton(
                 onPressed: () {
-                  Navigator.of(context).pushReplacementNamed('Inicio');
+                  Navigator.pop(context);
                 },
                 icon: Icon(
                   Icons.arrow_back,
@@ -54,17 +77,17 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
             backgroundColor: isLightMode
                 ? AssistAppTheme.buildLightTheme().backgroundColor
                 : AssistAppTheme.buildDarkTheme().backgroundColor,
-            body: _buildForm(widget.fecha, widget.id, widget.folio)),
+            body: _buildForm()),
       ),
     );
   }
 
-  Widget _buildForm(DateTime fecha, int id, String folio) {
-    TextEditingController date = TextEditingController(
-        text: DateFormat("yyyy-MM-dd").format(fecha).toString());
-    TextEditingController desc = TextEditingController();
+  Widget _buildForm() {
     var brightness = MediaQuery.of(context).platformBrightness;
     bool isLightMode = brightness == Brightness.light;
+    Color colorFondo = isLightMode
+        ? AssistAppTheme.buildLightTheme().primaryColor
+        : AssistAppTheme.buildDarkTheme().primaryColor;
     return Form(
       key: _formkey,
       autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -78,10 +101,50 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
+                  Text("Tipo Incidencia:",
+                      style: TextStyle(
+                        color: isLightMode ? Colors.black : Colors.white,
+                      )),
+                  DropdownButtonFormField(
+                    value: dropdownValue,
+                    isExpanded: true,
+                    alignment: Alignment.center,
+                    icon: const Icon(Icons.arrow_drop_down_outlined),
+                    elevation: 16,
+                    decoration: InputDecoration(
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: colorFondo),
+                      ),
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                          color: colorFondo,
+                        ),
+                      ),
+                      prefixIcon: Icon(
+                        Icons.lock_clock,
+                        color: colorFondo,
+                      ),
+                      labelStyle: TextStyle(color: colorFondo),
+                    ),
+                    onChanged: (String? value) {
+                      setState(() {
+                        dropdownValue = value!;
+                      });
+                    },
+                    items:
+                        opciones.map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
                   Text(
                     'Fecha de la incidencia',
                     style: TextStyle(
-                        fontWeight: FontWeight.w300,
                         fontSize: 15,
                         color: isLightMode ? Colors.black : Colors.white),
                   ),
@@ -89,24 +152,53 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                     height: 10,
                   ),
                   TextFormField(
-                    style: (const TextStyle(
-                        color: Colors.black, fontWeight: FontWeight.w400)),
-                    keyboardType: TextInputType.datetime,
-                    cursorColor: Colors.white,
-                    obscureText: false,
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      fillColor: Color(0xFFE0F7FA),
-                      filled: true,
-                      prefixIcon: Icon(Icons.date_range),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(color: Color(0xff14DAE2), width: 2.0),
-                        borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                    controller: dateInput,
+                    decoration: InputDecoration(
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: colorFondo),
                       ),
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                          color: colorFondo,
+                        ),
+                      ),
+                      prefixIcon: Icon(
+                        Icons.calendar_month,
+                        color: colorFondo,
+                      ),
+                      labelStyle: TextStyle(color: colorFondo),
                     ),
-                    controller: date,
                     readOnly: true,
+                    //set it true, so that user will not able to edit text
+                    onTap: () async {
+                      DateTime? pickedDate = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(1950),
+                        //DateTime.now() - not to allow to choose before today.
+                        lastDate: DateTime(2100),
+                        builder: (context, child) {
+                          return Theme(
+                            data: Theme.of(context).copyWith(
+                              colorScheme: ColorScheme.light(
+                                primary: colorFondo, // header background color
+                                onPrimary: Colors.black,
+                              ),
+                            ),
+                            child: child!,
+                          );
+                        },
+                      );
+
+                      if (pickedDate != null) {
+                        String formattedDate =
+                            DateFormat('yyyy-MM-dd').format(pickedDate);
+                        setState(() {
+                          dateInput.text =
+                              formattedDate; //set output date to TextField value.
+                        });
+                      } else {}
+                    },
                   ),
                   const SizedBox(
                     height: 10,
@@ -114,7 +206,6 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                   Text(
                     'Descripción del problema',
                     style: TextStyle(
-                        fontWeight: FontWeight.w300,
                         fontSize: 15,
                         color: isLightMode ? Colors.black : Colors.white),
                   ),
@@ -122,57 +213,62 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                     height: 10,
                   ),
                   TextFormField(
-                    style: (const TextStyle(
-                        color: Colors.black, fontWeight: FontWeight.w400)),
+                    controller: desc,
                     keyboardType: TextInputType.multiline,
                     minLines: 4,
-                    maxLines: null,
-                    cursorColor: Colors.white,
-                    obscureText: false,
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      fillColor: Color(0xFFE0F7FA),
-                      filled: true,
-                      focusedBorder: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(color: Color(0xff14DAE2), width: 2.0),
-                        borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                      ),
-                    ),
-                    controller: desc,
+                    maxLines: 4,
                     readOnly: false,
+                    decoration: InputDecoration(
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: colorFondo),
+                      ),
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                          color: colorFondo,
+                        ),
+                      ),
+                      prefixIcon: Icon(
+                        Icons.short_text,
+                        color: colorFondo,
+                      ),
+                      labelStyle: TextStyle(color: colorFondo),
+                    ),
                   ),
                   const SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text("Donde está el problema:",
-                          style: TextStyle(
-                            color: isLightMode ? Colors.black : Colors.white,
-                          )),
-                      Container(
-                          height: MediaQuery.of(context).size.height / 6,
-                          width: MediaQuery.of(context).size.width / 2,
-                          padding: const EdgeInsets.all(16.0),
-                          child: ListView.builder(
-                            scrollDirection: Axis.vertical,
-                            shrinkWrap: false,
-                            itemBuilder: (context, position) {
-                              return _createList(
-                                  context, opciones[position], position);
-                            },
-                            itemCount: opciones.length,
-                          ))
-                    ],
+                    height: 25,
                   ),
                   Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         ElevatedButton(
-                            onPressed: () {},
-                            child: const Text('Enviar reporte'))
+                            style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.resolveWith((states) {
+                                  return AssistAppTheme.buildLightTheme()
+                                      .primaryColor;
+                                }),
+                                shape: MaterialStateProperty.all<
+                                        RoundedRectangleBorder>(
+                                    RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(18.0),
+                                ))),
+                            onPressed: () async {
+                              var registro = await Report.crearRegistros(
+                                  widget.iIdHorario,
+                                  prefUser.folioUsuario,
+                                  dropdownValue,
+                                  dateInput.text,
+                                  desc.text);
+                              if (!registro["lError"] && registro["data"] > 0) {
+                                Future.microtask(() {
+                                  Navigator.pop(context);
+                                });
+                              }
+                            },
+                            child: const Text(
+                              'Enviar reporte',
+                              style: TextStyle(fontSize: 24),
+                            ))
                       ])
                 ],
               ),
@@ -181,46 +277,5 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
         ],
       )),
     );
-  }
-
-  _createList(context, item, position) {
-    var brightness = MediaQuery.of(context).platformBrightness;
-    bool isLightMode = brightness == Brightness.light;
-    return InkWell(
-      highlightColor: Colors.transparent,
-      splashColor: Colors.transparent,
-      onTap: () {
-        _updateState(position);
-      },
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Radio(
-            focusColor: Colors.grey,
-            value: _selectedPosition,
-            groupValue: position,
-            fillColor: MaterialStateColor.resolveWith((states) => Colors.grey),
-            onChanged: (_) {
-              _updateState(position);
-            },
-          ),
-          Text(
-            item,
-            style: TextStyle(color: isLightMode ? Colors.black : Colors.white),
-          ),
-        ],
-      ),
-    );
-  }
-
-  _updateState(int position) {
-    setState(() {
-      _selectedPosition = position;
-    });
-    onTypeChange(opciones[position]);
-  }
-
-  void onTypeChange(String opcion) async {
-    tipo = opcion;
   }
 }

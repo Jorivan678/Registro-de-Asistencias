@@ -1,17 +1,22 @@
 import 'dart:io';
 import 'package:app_dummy_10a/app_theme.dart';
 import 'package:app_dummy_10a/principal_pages/login.dart';
+import 'package:app_dummy_10a/share_prefs/prefs_user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'navigation_home_screen.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  final prefs = PrefUser();
+  await prefs.initPrefs();
   await SystemChrome.setPreferredOrientations(<DeviceOrientation>[
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown
-  ]).then((_) => runApp(const MyApp()));
+  ]);
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -36,6 +41,25 @@ class MyApp extends StatelessWidget {
           textTheme: AppTheme.textTheme,
           platform: TargetPlatform.iOS,
         ),
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate, // Here !
+          DefaultWidgetsLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('en'),
+          Locale('es'),
+          Locale('zh'),
+          Locale('he'),
+          Locale('ru'),
+          Locale('fr', 'BE'),
+          Locale('fr', 'CA'),
+          Locale('ja'),
+          Locale('de'),
+          Locale('hi'),
+          Locale('ar'),
+        ],
+        locale: const Locale('es'),
         home: const MyLogin(),
         routes: {
           'Inicio': (context) => const NavigationHomeScreen(indicator: true),

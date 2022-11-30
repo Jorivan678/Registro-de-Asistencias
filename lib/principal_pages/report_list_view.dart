@@ -1,11 +1,12 @@
 import 'package:app_dummy_10a/principal_pages/assist_app_theme.dart';
 import 'package:app_dummy_10a/principal_pages/report_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 
-import 'model/report_list_data.dart';
+import 'model/reports.dart';
 
-class ReportListView extends StatelessWidget {
+class ReportListView extends StatefulWidget {
   const ReportListView(
       {Key? key,
       this.reportData,
@@ -15,40 +16,50 @@ class ReportListView extends StatelessWidget {
       : super(key: key);
 
   final VoidCallback? callback;
-  final Reporte? reportData;
+  final ReportData? reportData;
   final AnimationController? animationController;
   final Animation<double>? animation;
+
+  @override
+  State<ReportListView> createState() => _ReportListViewState();
+}
+
+class _ReportListViewState extends State<ReportListView> {
+  @override
+  void initState() {
+    super.initState();
+    initializeDateFormatting('es');
+  }
 
   @override
   Widget build(BuildContext context) {
     var brightness = MediaQuery.of(context).platformBrightness;
     bool isLightMode = brightness == Brightness.light;
     return AnimatedBuilder(
-        animation: animationController!,
+        animation: widget.animationController!,
         builder: (BuildContext context, Widget? child) {
           return FadeTransition(
-            opacity: animation!,
+            opacity: widget.animation!,
             child: Transform(
               transform: Matrix4.translationValues(
-                  0.0, 50 * (1.0 - animation!.value), 0.0),
+                  0.0, 50 * (1.0 - widget.animation!.value), 0.0),
               child: Padding(
                 padding: const EdgeInsets.only(
                     left: 24, right: 24, top: 8, bottom: 16),
                 child: InkWell(
                   splashColor: Colors.transparent,
-                  onTap: callback,
+                  onTap: widget.callback,
                   child: GestureDetector(
                       onTap: () {
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) {
                           return ReportScreen(
-                            folio: reportData!.folio,
-                            id: reportData!.id,
-                            fecha: reportData!.fecha,
-                            desc: reportData!.descripcion,
-                            tipo: reportData!.tipo,
-                            idAssist: reportData!.idAssist,
-                          );
+                              idHorario: widget.reportData!.iIdHorario,
+                              cTipoIncidencia: widget.reportData!.cTipoEntrada,
+                              cPeticion: widget.reportData!.cDesPeticion,
+                              dtFechaIncidencia:
+                                  widget.reportData!.dtFechaIncidencia,
+                              cRespuesta: widget.reportData!.cObservacion);
                         }));
                       },
                       child: Container(
@@ -89,7 +100,7 @@ class ReportListView extends StatelessWidget {
                                                   left: 16, top: 8, bottom: 8),
                                               child: Column(
                                                 mainAxisAlignment:
-                                                    MainAxisAlignment.center,
+                                                    MainAxisAlignment.start,
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: <Widget>[
@@ -98,11 +109,10 @@ class ReportListView extends StatelessWidget {
                                                         CrossAxisAlignment
                                                             .start,
                                                     mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceAround,
+                                                        MainAxisAlignment.start,
                                                     children: [
                                                       Text(
-                                                        'Fecha: ${DateFormat("dd/MM/yyyy").format(reportData!.fecha)}',
+                                                        'Fecha: ${DateFormat("dd/MM/yyyy", 'es').format(widget.reportData!.dtFechaIncidencia)}',
                                                         textAlign:
                                                             TextAlign.left,
                                                         style: const TextStyle(
@@ -114,7 +124,7 @@ class ReportListView extends StatelessWidget {
                                                     ],
                                                   ),
                                                   Text(
-                                                    'ID de Reporte: ${reportData!.id}',
+                                                    'Estatus: ${widget.reportData!.cAceptada}',
                                                     style: const TextStyle(
                                                         fontSize: 16),
                                                   ),
@@ -126,7 +136,7 @@ class ReportListView extends StatelessWidget {
                                                         MainAxisAlignment.start,
                                                     children: <Widget>[
                                                       Text(
-                                                        'Problema en la: ${reportData!.tipo}',
+                                                        'Tipo de incidencia: ${widget.reportData!.cTipoEntrada}',
                                                         style: const TextStyle(
                                                           fontSize: 16,
                                                         ),

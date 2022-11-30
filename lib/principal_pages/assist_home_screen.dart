@@ -1,11 +1,15 @@
 import 'package:app_dummy_10a/principal_pages/assist_list_view.dart';
-import 'package:app_dummy_10a/principal_pages/model/assist_list_data.dart';
+import 'package:app_dummy_10a/principal_pages/model/register_list_data.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
+import '../share_prefs/prefs_user.dart';
+import 'createReport_screen.dart';
 import 'filters_screen.dart';
 import 'assist_app_theme.dart';
 
 class AssistHomeScreen extends StatefulWidget {
+  static const String routeName = 'Inicio';
   const AssistHomeScreen({Key? key}) : super(key: key);
 
   @override
@@ -14,22 +18,41 @@ class AssistHomeScreen extends StatefulWidget {
 
 class _AssistHomeScreenState extends State<AssistHomeScreen>
     with TickerProviderStateMixin {
+  final prefUser = PrefUser();
   AnimationController? animationController;
-  List<AssistListData> assistList = AssistListData.assistList;
+  RecordsData registros = RecordsData(oRegistros: []);
   final ScrollController _scrollController = ScrollController();
-
+  bool isLoading = false;
   DateTime curentDay = DateTime.now();
+  String horaEntrada = '';
+  String horaSalida = '';
+  int numRegistros = 0;
 
   @override
   void initState() {
     animationController = AnimationController(
         duration: const Duration(milliseconds: 1000), vsync: this);
     super.initState();
+    initializeDateFormatting('es');
+    refreshRegistros();
   }
 
   Future<bool> getData() async {
     await Future<dynamic>.delayed(const Duration(milliseconds: 200));
     return true;
+  }
+
+  Future refreshRegistros() async {
+    setState(() => isLoading = true);
+    registros =
+        await RecordsData.obtenerRegistros(prefUser.folioUsuario, null, null);
+
+    setState(() => {
+          isLoading = false,
+          horaEntrada = registros.cHoraEntrada,
+          horaSalida = registros.cHoraSalida,
+          numRegistros = registros.oRegistros.length,
+        });
   }
 
   @override
@@ -73,45 +96,58 @@ class _AssistHomeScreenState extends State<AssistHomeScreen>
                                 children: <Widget>[
                                   getSeparateBarUI(),
                                   getTimeDateUI(),
+                                  getFilterBarUI(),
                                 ],
                               );
                             }, childCount: 1),
                           ),
-                          SliverPersistentHeader(
-                            pinned: true,
-                            floating: true,
-                            delegate: ContestTabHeader(
-                              getFilterBarUI(assistList.length),
-                            ),
-                          ),
                         ];
                       },
-                      body: Container(
-                        color: isLightMode
-                            ? AssistAppTheme.buildLightTheme().backgroundColor
-                            : AssistAppTheme.buildDarkTheme().backgroundColor,
-                        child: ListView.builder(
-                          itemCount: assistList.length,
-                          padding: const EdgeInsets.only(top: 8),
-                          scrollDirection: Axis.vertical,
-                          itemBuilder: (BuildContext context, int index) {
-                            final int count =
-                                assistList.length > 10 ? 10 : assistList.length;
-                            final Animation<double> animation =
-                                Tween<double>(begin: 0.0, end: 1.0).animate(
-                                    CurvedAnimation(
-                                        parent: animationController!,
-                                        curve: Interval(
-                                            (1 / count) * index, 1.0,
-                                            curve: Curves.fastOutSlowIn)));
-                            animationController?.forward();
-                            return AssistListView(
-                              callback: () {},
-                              assistData: assistList[index],
-                              animation: animation,
-                              animationController: animationController!,
-                            );
-                          },
+                      body: RefreshIndicator(
+                        onRefresh: () async {
+                          refreshRegistros();
+                        },
+                        child: Container(
+                          color: isLightMode
+                              ? AssistAppTheme.buildLightTheme().backgroundColor
+                              : AssistAppTheme.buildDarkTheme().backgroundColor,
+                          child: isLoading
+                              ? const Center(child: CircularProgressIndicator())
+                              : registros.oRegistros.isEmpty
+                                  ? const Center(
+                                      child:
+                                          Text("No se encontraron registros"),
+                                    )
+                                  : ListView.builder(
+                                      itemCount: numRegistros,
+                                      padding: const EdgeInsets.only(top: 8),
+                                      scrollDirection: Axis.vertical,
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
+                                        final int count = numRegistros > 10
+                                            ? 10
+                                            : numRegistros;
+                                        final Animation<double> animation =
+                                            Tween<double>(begin: 0.0, end: 1.0)
+                                                .animate(CurvedAnimation(
+                                                    parent:
+                                                        animationController!,
+                                                    curve: Interval(
+                                                        (1 / count) * index,
+                                                        1.0,
+                                                        curve: Curves
+                                                            .fastOutSlowIn)));
+                                        animationController?.forward();
+                                        return AssistListView(
+                                          callback: () {},
+                                          assistData:
+                                              registros.oRegistros[index],
+                                          animation: animation,
+                                          animationController:
+                                              animationController!,
+                                        );
+                                      },
+                                    ),
                         ),
                       ),
                     ),
@@ -120,6 +156,25 @@ class _AssistHomeScreenState extends State<AssistHomeScreen>
               ),
             ),
           ],
+        ),
+        floatingActionButton: FloatingActionButton.extended(
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: ((context) {
+              return CreateReportScreen(
+                  iIdHorario: 0,
+                  cTipoIncidencia: "",
+                  dtFechaIncidencia: DateTime.now());
+            })));
+          },
+          label: const Text(
+            'Incidencia',
+          ),
+          backgroundColor: isLightMode
+              ? AssistAppTheme.buildLightTheme().backgroundColor
+              : AssistAppTheme.buildDarkTheme().backgroundColor,
+          icon: const Icon(
+            Icons.report_problem,
+          ),
         ),
       ),
     );
@@ -151,11 +206,10 @@ class _AssistHomeScreenState extends State<AssistHomeScreen>
                   return const SizedBox();
                 } else {
                   return ListView.builder(
-                    itemCount: assistList.length,
+                    itemCount: numRegistros,
                     scrollDirection: Axis.vertical,
                     itemBuilder: (BuildContext context, int index) {
-                      final int count =
-                          assistList.length > 10 ? 10 : assistList.length;
+                      final int count = numRegistros > 10 ? 10 : numRegistros;
                       final Animation<double> animation =
                           Tween<double>(begin: 0.0, end: 1.0).animate(
                               CurvedAnimation(
@@ -166,7 +220,7 @@ class _AssistHomeScreenState extends State<AssistHomeScreen>
 
                       return AssistListView(
                         callback: () {},
-                        assistData: assistList[index],
+                        assistData: registros.oRegistros[index],
                         animation: animation,
                         animationController: animationController!,
                       );
@@ -213,7 +267,6 @@ class _AssistHomeScreenState extends State<AssistHomeScreen>
                           Text(
                             'Día en curso',
                             style: TextStyle(
-                                fontWeight: FontWeight.w100,
                                 fontSize: 16,
                                 color: Colors.grey.withOpacity(0.8)),
                           ),
@@ -221,9 +274,8 @@ class _AssistHomeScreenState extends State<AssistHomeScreen>
                             height: 8,
                           ),
                           Text(
-                            DateFormat("dd, MMM, yyyy").format(curentDay),
+                            DateFormat("dd, MMM yyyy", "es").format(curentDay),
                             style: const TextStyle(
-                              fontWeight: FontWeight.w100,
                               fontSize: 16,
                             ),
                           ),
@@ -269,17 +321,15 @@ class _AssistHomeScreenState extends State<AssistHomeScreen>
                           Text(
                             'Horario de trabajo',
                             style: TextStyle(
-                                fontWeight: FontWeight.w100,
                                 fontSize: 16,
                                 color: Colors.grey.withOpacity(0.8)),
                           ),
                           const SizedBox(
                             height: 8,
                           ),
-                          const Text(
-                            '8:00 - 15:00',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w100,
+                          Text(
+                            "$horaEntrada - $horaSalida",
+                            style: const TextStyle(
                               fontSize: 16,
                             ),
                           ),
@@ -329,7 +379,7 @@ class _AssistHomeScreenState extends State<AssistHomeScreen>
     );
   }
 
-  Widget getFilterBarUI(int cantidad) {
+  Widget getFilterBarUI() {
     var brightness = MediaQuery.of(context).platformBrightness;
     bool isLightMode = brightness == Brightness.light;
     return Stack(
@@ -366,9 +416,8 @@ class _AssistHomeScreenState extends State<AssistHomeScreen>
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      '$cantidad registros encontrados',
+                      "$numRegistros registros encontrados",
                       style: const TextStyle(
-                        fontWeight: FontWeight.w100,
                         fontSize: 16,
                       ),
                     ),
@@ -401,7 +450,6 @@ class _AssistHomeScreenState extends State<AssistHomeScreen>
                           const Text(
                             'Filtro',
                             style: TextStyle(
-                              fontWeight: FontWeight.w100,
                               fontSize: 16,
                             ),
                           ),

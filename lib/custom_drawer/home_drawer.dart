@@ -1,6 +1,9 @@
 import 'package:app_dummy_10a/app_theme.dart';
 import 'package:flutter/material.dart';
 
+import '../principal_pages/model/login_model.dart';
+import '../share_prefs/prefs_user.dart';
+
 class HomeDrawer extends StatefulWidget {
   const HomeDrawer(
       {Key? key,
@@ -18,6 +21,7 @@ class HomeDrawer extends StatefulWidget {
 }
 
 class _HomeDrawerState extends State<HomeDrawer> {
+  final prefUser = PrefUser();
   List<DrawerList>? drawerList;
   @override
   void initState() {
@@ -30,7 +34,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
       DrawerList(
         index: DrawerIndex.HOME,
         labelName: 'Asistencias',
-        icon: Icon(Icons.toc),
+        icon: const Icon(Icons.toc),
       ),
       DrawerList(
         index: DrawerIndex.Report,
@@ -87,18 +91,18 @@ class _HomeDrawerState extends State<HomeDrawer> {
                             child: ClipRRect(
                               borderRadius:
                                   const BorderRadius.all(Radius.circular(50.0)),
-                              child: Image.asset('assets/images/userImage.jpg'),
+                              child: Image.asset('assets/images/logo.png'),
                             ),
                           ),
                         ),
                       );
                     },
                   ),
-                  const Padding(
-                    padding: EdgeInsets.only(top: 8, left: 4),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8, left: 4),
                     child: Text(
-                      'Alejandro Pech',
-                      style: TextStyle(
+                      prefUser.nombreUsuario,
+                      style: const TextStyle(
                         fontWeight: FontWeight.w600,
                         color: AppTheme.nearlyBlack,
                         fontSize: 18,
@@ -133,7 +137,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
           Column(
             children: <Widget>[
               ListTile(
-                title: Text(
+                title: const Text(
                   'Cerrar sesión',
                   style: TextStyle(
                     fontFamily: AppTheme.fontName,
@@ -143,11 +147,12 @@ class _HomeDrawerState extends State<HomeDrawer> {
                   ),
                   textAlign: TextAlign.left,
                 ),
-                trailing: Icon(
+                trailing: const Icon(
                   Icons.power_settings_new,
                   color: Colors.red,
                 ),
-                onTap: () {
+                onTap: () async {
+                  Login.cerrarSesion();
                   Navigator.pushReplacementNamed(context, 'Login');
                 },
               ),
@@ -159,10 +164,6 @@ class _HomeDrawerState extends State<HomeDrawer> {
         ],
       ),
     );
-  }
-
-  void onTapped() {
-    print('Doing Something...'); // Print to console.
   }
 
   Widget inkwell(DrawerList listData) {

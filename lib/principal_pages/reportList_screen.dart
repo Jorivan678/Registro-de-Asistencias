@@ -1,10 +1,9 @@
 import 'package:app_dummy_10a/principal_pages/assist_app_theme.dart';
-import 'package:app_dummy_10a/principal_pages/model/report_list_data.dart';
 import 'package:app_dummy_10a/principal_pages/report_list_view.dart';
 import 'package:flutter/material.dart';
 
-import 'assist_home_screen.dart';
-import 'filters_screen.dart';
+import '../share_prefs/prefs_user.dart';
+import 'model/reports.dart';
 
 class ReportListScreen extends StatefulWidget {
   const ReportListScreen({Key? key}) : super(key: key);
@@ -16,21 +15,34 @@ class ReportListScreen extends StatefulWidget {
 class _ReportListScreenState extends State<ReportListScreen>
     with TickerProviderStateMixin {
   AnimationController? animationController;
-  List<Reporte> reportList = Reporte.reportList;
+  Report reportList = Report(oReportes: []);
   final ScrollController _scrollController = ScrollController();
-
+  bool isLoading = false;
+  final prefUser = PrefUser();
   DateTime curentDay = DateTime.now();
+  int numRegistros = 0;
 
   @override
   void initState() {
     animationController = AnimationController(
         duration: const Duration(milliseconds: 1000), vsync: this);
     super.initState();
+    refreshIncidencias();
   }
 
   Future<bool> getData() async {
     await Future<dynamic>.delayed(const Duration(milliseconds: 200));
     return true;
+  }
+
+  Future refreshIncidencias() async {
+    setState(() => isLoading = true);
+    reportList = await Report.obtenerRegistros(prefUser.folioUsuario);
+
+    setState(() => {
+          isLoading = false,
+          numRegistros = reportList.oReportes.length,
+        });
   }
 
   @override
@@ -64,41 +76,64 @@ class _ReportListScreenState extends State<ReportListScreen>
                       headerSliverBuilder:
                           (BuildContext context, bool innerBoxIsScrolled) {
                         return <Widget>[
-                          SliverPersistentHeader(
-                            pinned: true,
-                            floating: true,
-                            delegate: ContestTabHeader(
-                              getFilterBarUI(reportList.length),
-                            ),
+                          SliverList(
+                            delegate: SliverChildBuilderDelegate(
+                                (BuildContext context, int index) {
+                              return Column(
+                                children: <Widget>[
+                                  getFilterBarUI(),
+                                ],
+                              );
+                            }, childCount: 1),
                           ),
                         ];
                       },
-                      body: Container(
-                        color: isLightMode
-                            ? AssistAppTheme.buildLightTheme().backgroundColor
-                            : AssistAppTheme.buildDarkTheme().backgroundColor,
-                        child: ListView.builder(
-                          itemCount: reportList.length,
-                          padding: const EdgeInsets.only(top: 8),
-                          scrollDirection: Axis.vertical,
-                          itemBuilder: (BuildContext context, int index) {
-                            final int count =
-                                reportList.length > 10 ? 10 : reportList.length;
-                            final Animation<double> animation =
-                                Tween<double>(begin: 0.0, end: 1.0).animate(
-                                    CurvedAnimation(
-                                        parent: animationController!,
-                                        curve: Interval(
-                                            (1 / count) * index, 1.0,
-                                            curve: Curves.fastOutSlowIn)));
-                            animationController?.forward();
-                            return ReportListView(
-                              callback: () {},
-                              reportData: reportList[index],
-                              animation: animation,
-                              animationController: animationController!,
-                            );
-                          },
+                      body: RefreshIndicator(
+                        onRefresh: () async {
+                          refreshIncidencias();
+                        },
+                        child: Container(
+                          color: isLightMode
+                              ? AssistAppTheme.buildLightTheme().backgroundColor
+                              : AssistAppTheme.buildDarkTheme().backgroundColor,
+                          child: isLoading
+                              ? const Center(child: CircularProgressIndicator())
+                              : reportList.oReportes.isEmpty
+                                  ? const Center(
+                                      child:
+                                          Text("No se encontraron registros"),
+                                    )
+                                  : ListView.builder(
+                                      itemCount: reportList.oReportes.length,
+                                      padding: const EdgeInsets.only(top: 8),
+                                      scrollDirection: Axis.vertical,
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
+                                        final int count =
+                                            reportList.oReportes.length > 10
+                                                ? 10
+                                                : reportList.oReportes.length;
+                                        final Animation<double> animation =
+                                            Tween<double>(begin: 0.0, end: 1.0)
+                                                .animate(CurvedAnimation(
+                                                    parent:
+                                                        animationController!,
+                                                    curve: Interval(
+                                                        (1 / count) * index,
+                                                        1.0,
+                                                        curve: Curves
+                                                            .fastOutSlowIn)));
+                                        animationController?.forward();
+                                        return ReportListView(
+                                          callback: () {},
+                                          reportData:
+                                              reportList.oReportes[index],
+                                          animation: animation,
+                                          animationController:
+                                              animationController!,
+                                        );
+                                      },
+                                    ),
                         ),
                       ),
                     ),
@@ -165,7 +200,7 @@ class _ReportListScreenState extends State<ReportListScreen>
     );
   }
 
-  Widget getFilterBarUI(int cantidad) {
+  Widget getFilterBarUI() {
     var brightness = MediaQuery.of(context).platformBrightness;
     bool isLightMode = brightness == Brightness.light;
     return Stack(
@@ -202,55 +237,9 @@ class _ReportListScreenState extends State<ReportListScreen>
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      '$cantidad registros encontrados.',
+                      '$numRegistros registros encontrados.',
                       style: const TextStyle(
-                        fontWeight: FontWeight.w100,
                         fontSize: 16,
-                      ),
-                    ),
-                  ),
-                ),
-                Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    focusColor: Colors.transparent,
-                    highlightColor: Colors.transparent,
-                    hoverColor: Colors.transparent,
-                    splashColor: Colors.grey.withOpacity(0.2),
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(4.0),
-                    ),
-                    onTap: () {
-                      FocusScope.of(context).requestFocus(FocusNode());
-                      Navigator.push<dynamic>(
-                        context,
-                        MaterialPageRoute<dynamic>(
-                            builder: (BuildContext context) =>
-                                const FiltersScreen(),
-                            fullscreenDialog: true),
-                      );
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 8),
-                      child: Row(
-                        children: <Widget>[
-                          const Text(
-                            'Filtro',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w100,
-                              fontSize: 16,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Icon(Icons.sort,
-                                color: isLightMode
-                                    ? AssistAppTheme.buildLightTheme()
-                                        .primaryColor
-                                    : AssistAppTheme.buildDarkTheme()
-                                        .primaryColor),
-                          ),
-                        ],
                       ),
                     ),
                   ),
